@@ -1,0 +1,44 @@
+:root {
+  --header-height: 120px;
+  --footer-height: 70px;
+  --gameBoard-height: 450px;
+  --gameBoard-width: 450px;
+}
+
+body {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+header {
+  height: var(--header-height);
+}
+.container {
+  display: flex;
+  height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+main {
+  border: 1px red solid;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.gameBoard {
+  height: var(--gameBoard-height);
+  width: var(--gameBoard-width);
+  /* border: 1px solid magenta; */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.cell {
+  cursor: pointer;
+  font-size: 7.5rem;
+  padding: 0;
+}
+
+footer {
+  height: var(--footer-height);
+}

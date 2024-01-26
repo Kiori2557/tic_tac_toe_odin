@@ -23,6 +23,8 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 50px;
 }
 .gameBoard {
   height: var(--gameBoard-height);
@@ -31,6 +33,12 @@ main {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
+}
+
+.playerTurn {
+  border: 1px solid magenta;
+  font-size: 35px;
+  font-weight: 900;
 }
 
 .cell {

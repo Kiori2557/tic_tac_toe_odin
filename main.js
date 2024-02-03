@@ -9,11 +9,12 @@ const gameBoard = (function () {
       row.push("");
     }
   }
+  console.log("hi");
   return { board };
 })();
 
 function cell() {
-  let value = 0;
+  let value = "";
   const mark = (playerMarker) => (value = playerMarker);
   const getValue = () => value;
   return { getValue, mark };

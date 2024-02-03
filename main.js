@@ -12,6 +12,13 @@ const gameBoard = (function () {
   return { board };
 })();
 
+function cell() {
+  let value = 0;
+  const mark = (playerMarker) => (value = playerMarker);
+  const getValue = () => value;
+  return { getValue, mark };
+}
+
 const gameBoardController = (function () {
   const game = gameBoard;
   const board = game.board;
@@ -41,16 +48,18 @@ const gameBoardController = (function () {
   };
 
   const getActivePlayer = () => activePlayer;
+  const getPlayer = () => players;
 
   const play = function (x, y) {
     let playerMark = activePlayer.mark;
     board[x][y] = playerMark;
-    checkWinner(x, y);
+    checkWinner();
     changePlayer();
     console.log(`${activePlayer.name}'s turn.`);
     console.log(board);
+    return board;
   };
-  return { play, getActivePlayer, addScore, getScore };
+  return { play, getPlayer, getActivePlayer, addScore, getScore };
 })();
 
 //Screen Controller
@@ -96,6 +105,7 @@ const screenController = (function () {
     let x = xyPos[0];
     let y = xyPos[1];
     gameController.play(x, y);
+    console.log(board);
     generateBoard();
   }
 
@@ -104,7 +114,8 @@ const screenController = (function () {
 screenController.generateBoard();
 
 //check winning condition
-function checkWinner(x, y) {
+function checkWinner() {
+  const displayScoreDiv = document.querySelector(".displayScore");
   const game = gameBoard;
   const board = game.board;
   const gameController = gameBoardController;
@@ -118,15 +129,7 @@ function checkWinner(x, y) {
   console.log(columns);
   console.log(rows);
   console.log(crosses);
-  function check(obj) {
-    let currentPlayer = gameController.getActivePlayer();
-    obj.forEach((array) => {
-      if (array.length == 3) {
-        hasWinner = array.every((cell) => cell == currentPlayer.mark);
-        return hasWinner;
-      }
-    });
-  }
+
   check(columns);
   check(rows);
   check(crosses);
@@ -134,24 +137,21 @@ function checkWinner(x, y) {
     let winner = gameController.getActivePlayer().name;
     gameController.addScore(winner);
     let score = gameController.getScore();
-    console.log(
-      `the score is updated to playerOne:${score.playerOne} and playerTwo:${score.playerTwo} `
-    );
+    let players = gameBoardController.getPlayer();
+    updateScore(score, players);
   }
-  // function columnObj(x, y) {
-  //   let cell = board[x][y];
-  //   if (!columns[y]) {
-  //     columns[y] = [];
-  //   }
-  //   columns[y].push(cell);
-  // }
-  // function rowObj(x, y) {
-  //   let cell = board[x][y];
-  //   if (!rows[x]) {
-  //     rows[x] = [];
-  //   }
-  //   rows[x].push(cell);
-  // }
+
+  function updateScore(score, players) {
+    const title = document.createElement("h3");
+    const playOneScore = document.createElement("p");
+    const playTwoScore = document.createElement("p");
+    title.textContent = `Game Score`;
+    playOneScore.textContent = `${players[0].name} : ${score.playerOne}`;
+    playTwoScore.textContent = `${players[1].name} : ${score.playerTwo}`;
+    displayScoreDiv.textContent = "";
+    displayScoreDiv.append(title, playOneScore, playTwoScore);
+  }
+
   function createColumnObj(board) {
     board.forEach((row) => {
       row.forEach((cell, index) => {
@@ -187,5 +187,14 @@ function checkWinner(x, y) {
         crosses[1] = [cell4, cell5, cell6];
       }
     }
+  }
+  function check(obj) {
+    let currentPlayer = gameController.getActivePlayer();
+    obj.forEach((array) => {
+      if (array.length == 3) {
+        hasWinner = array.every((cell) => cell == currentPlayer.mark);
+        return hasWinner;
+      }
+    });
   }
 }

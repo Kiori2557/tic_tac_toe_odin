@@ -6,11 +6,13 @@ const gameBoard = (function () {
     let row = [];
     board.push(row);
     for (let j = 0; j < columns; j++) {
-      row.push("");
+      row.push(cell());
     }
   }
-  console.log("hi");
-  return { board };
+  const getBoard = () => board;
+  const printBoard = () =>
+    board.map((row) => row.map((cell) => cell.getValue()));
+  return { board, printBoard, getBoard };
 })();
 
 function cell() {
@@ -53,11 +55,11 @@ const gameBoardController = (function () {
 
   const play = function (x, y) {
     let playerMark = activePlayer.mark;
-    board[x][y] = playerMark;
+    board[x][y].mark(playerMark);
     checkWinner();
     changePlayer();
-    console.log(`${activePlayer.name}'s turn.`);
-    console.log(board);
+    // console.log(`${activePlayer.name}'s turn.`);
+    // console.log(board);
     return board;
   };
   return { play, getPlayer, getActivePlayer, addScore, getScore };
@@ -81,7 +83,7 @@ const screenController = (function () {
         cell.dataset.position = [x, y];
         cell.classList.add("cell");
         boardDiv.appendChild(cell);
-        cell.textContent = value;
+        cell.textContent = value.getValue();
       })
     );
     renderPlayerTurn();
@@ -106,7 +108,7 @@ const screenController = (function () {
     let x = xyPos[0];
     let y = xyPos[1];
     gameController.play(x, y);
-    console.log(board);
+    // console.log(board);
     generateBoard();
   }
 
@@ -118,15 +120,16 @@ screenController.generateBoard();
 function checkWinner() {
   const displayScoreDiv = document.querySelector(".displayScore");
   const game = gameBoard;
-  const board = game.board;
+  const board = game.getBoard();
+  const boardWithValues = game.printBoard();
   const gameController = gameBoardController;
   const columns = [];
   const rows = [];
   const crosses = [];
   let hasWinner = false;
-  createColumnObj(board);
-  createRowObj(board);
-  createCrossObj(board);
+  createColumnObj(boardWithValues);
+  createRowObj(boardWithValues);
+  createCrossObj(boardWithValues);
   console.log(columns);
   console.log(rows);
   console.log(crosses);
@@ -140,6 +143,10 @@ function checkWinner() {
     let score = gameController.getScore();
     let players = gameBoardController.getPlayer();
     updateScore(score, players);
+    let defaultMark = "";
+    board.forEach((row) => {
+      row.forEach((cell) => cell.mark(defaultMark));
+    });
   }
 
   function updateScore(score, players) {
@@ -153,8 +160,8 @@ function checkWinner() {
     displayScoreDiv.append(title, playOneScore, playTwoScore);
   }
 
-  function createColumnObj(board) {
-    board.forEach((row) => {
+  function createColumnObj(boardWithValues) {
+    boardWithValues.forEach((row) => {
       row.forEach((cell, index) => {
         if (cell != "") {
           if (!columns[index]) {
@@ -165,8 +172,8 @@ function checkWinner() {
       });
     });
   }
-  function createRowObj(board) {
-    board.forEach((row, index) => {
+  function createRowObj(boardWithValues) {
+    boardWithValues.forEach((row, index) => {
       row.forEach((cell) => {
         if (cell != "") {
           if (!rows[index]) {
@@ -177,10 +184,18 @@ function checkWinner() {
       });
     });
   }
-  function createCrossObj(board) {
-    if (board[1][1]) {
-      let [cell1, cell2, cell3] = [board[0][0], board[1][1], board[2][2]];
-      let [cell4, cell5, cell6] = [board[0][2], board[1][1], board[2][0]];
+  function createCrossObj(boardWithValues) {
+    if (boardWithValues[1][1]) {
+      let [cell1, cell2, cell3] = [
+        boardWithValues[0][0],
+        boardWithValues[1][1],
+        boardWithValues[2][2],
+      ];
+      let [cell4, cell5, cell6] = [
+        boardWithValues[0][2],
+        boardWithValues[1][1],
+        boardWithValues[2][0],
+      ];
       if (cell1 != "" && cell2 != "" && cell3 != "") {
         crosses[0] = [cell1, cell2, cell3];
       }
@@ -190,11 +205,14 @@ function checkWinner() {
     }
   }
   function check(obj) {
-    let currentPlayer = gameController.getActivePlayer();
+    let player = gameController.getActivePlayer();
+
     obj.forEach((array) => {
       if (array.length == 3) {
-        hasWinner = array.every((cell) => cell == currentPlayer.mark);
-        return hasWinner;
+        if (!hasWinner) {
+          hasWinner = array.every((cell) => cell == player.mark);
+        }
+        console.log(hasWinner);
       }
     });
   }

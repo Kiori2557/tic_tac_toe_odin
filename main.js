@@ -1,3 +1,11 @@
+const dialog = document.querySelector("dialog");
+const show = document.querySelector("#show");
+const startNewRoundBtn = document.querySelector(".newRoundBtn");
+const startNewGameBtn = document.querySelector(".newGameBtn");
+
+show.addEventListener("click", function () {
+  dialog.showModal();
+});
 const gameBoard = (function () {
   const rows = 3;
   const columns = 3;
@@ -44,6 +52,10 @@ const gameBoardController = (function () {
 
   const addScore = (player) => score[player]++;
   const getScore = () => score;
+  const resetScore = () => {
+    score[playerOne] = 0;
+    score[playerTwo] = 0;
+  };
 
   let activePlayer = players[0];
   const changePlayer = function () {
@@ -62,12 +74,13 @@ const gameBoardController = (function () {
     // console.log(board);
     return board;
   };
-  return { play, getPlayer, getActivePlayer, addScore, getScore };
+  return { play, getPlayer, getActivePlayer, addScore, getScore, resetScore };
 })();
 
 //Screen Controller
 
 const screenController = (function () {
+  const displayScoreDiv = document.querySelector(".displayScore");
   const boardDiv = document.querySelector(".gameBoard");
   const playerTurnDiv = document.querySelector(".playerTurn");
   const game = gameBoard;
@@ -108,17 +121,24 @@ const screenController = (function () {
     let x = xyPos[0];
     let y = xyPos[1];
     gameController.play(x, y);
-    // console.log(board);
     generateBoard();
   }
-
-  return { generateBoard };
+  function updateScore(score, players) {
+    const title = document.createElement("h3");
+    const playOneScore = document.createElement("p");
+    const playTwoScore = document.createElement("p");
+    title.textContent = `Game Score`;
+    playOneScore.textContent = `${players[0].name} : ${score.playerOne}`;
+    playTwoScore.textContent = `${players[1].name} : ${score.playerTwo}`;
+    displayScoreDiv.textContent = "";
+    displayScoreDiv.append(title, playOneScore, playTwoScore);
+  }
+  return { generateBoard, updateScore };
 })();
 screenController.generateBoard();
 
 //check winning condition
 function checkWinner() {
-  const displayScoreDiv = document.querySelector(".displayScore");
   const game = gameBoard;
   const board = game.getBoard();
   const boardWithValues = game.printBoard();
@@ -130,10 +150,6 @@ function checkWinner() {
   createColumnObj(boardWithValues);
   createRowObj(boardWithValues);
   createCrossObj(boardWithValues);
-  console.log(columns);
-  console.log(rows);
-  console.log(crosses);
-
   check(columns);
   check(rows);
   check(crosses);
@@ -142,22 +158,8 @@ function checkWinner() {
     gameController.addScore(winner);
     let score = gameController.getScore();
     let players = gameBoardController.getPlayer();
-    updateScore(score, players);
-    let defaultMark = "";
-    board.forEach((row) => {
-      row.forEach((cell) => cell.mark(defaultMark));
-    });
-  }
-
-  function updateScore(score, players) {
-    const title = document.createElement("h3");
-    const playOneScore = document.createElement("p");
-    const playTwoScore = document.createElement("p");
-    title.textContent = `Game Score`;
-    playOneScore.textContent = `${players[0].name} : ${score.playerOne}`;
-    playTwoScore.textContent = `${players[1].name} : ${score.playerTwo}`;
-    displayScoreDiv.textContent = "";
-    displayScoreDiv.append(title, playOneScore, playTwoScore);
+    screenController.updateScore(score, players);
+    resetRound(board);
   }
 
   function createColumnObj(boardWithValues) {
@@ -216,4 +218,24 @@ function checkWinner() {
       }
     });
   }
+}
+
+startNewRoundBtn.addEventListener("click", resetRound);
+startNewGameBtn.addEventListener("click", resetGame);
+
+function resetRound() {
+  const board = gameBoard.getBoard();
+  let defaultMark = "";
+  board.forEach((row) => {
+    row.forEach((cell) => cell.mark(defaultMark));
+  });
+  screenController.generateBoard();
+  dialog.close();
+}
+function resetGame() {
+  resetRound();
+  let score = gameBoardController.getScore();
+  let players = gameBoardController.getPlayer();
+  gameBoardController.resetScore();
+  screenController.updateScore(score, players);
 }

@@ -50,3 +50,11 @@ main {
 footer {
   height: var(--footer-height);
 }
+
+.dialog {
+  min-width: 200px;
+  min-height: 150px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+}

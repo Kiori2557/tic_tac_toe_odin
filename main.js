@@ -69,6 +69,7 @@ const gameBoardController = (function () {
     let playerMark = activePlayer.mark;
     board[x][y].mark(playerMark);
     checkWinner();
+    checkDraw();
     changePlayer();
     // console.log(`${activePlayer.name}'s turn.`);
     // console.log(board);
@@ -139,9 +140,8 @@ screenController.generateBoard();
 
 //check winning condition
 function checkWinner() {
-  const game = gameBoard;
-  const board = game.getBoard();
-  const boardWithValues = game.printBoard();
+  const board = gameBoard.getBoard();
+  const boardWithValues = gameBoard.printBoard();
   const gameController = gameBoardController;
   const columns = [];
   const rows = [];
@@ -161,7 +161,6 @@ function checkWinner() {
     screenController.updateScore(score, players);
     resetRound(board);
   }
-
   function createColumnObj(boardWithValues) {
     boardWithValues.forEach((row) => {
       row.forEach((cell, index) => {
@@ -214,9 +213,21 @@ function checkWinner() {
         if (!hasWinner) {
           hasWinner = array.every((cell) => cell == player.mark);
         }
-        console.log(hasWinner);
       }
     });
+  }
+}
+
+function checkDraw() {
+  let isDraw = false;
+  let rowHasFreeCell = [true, true, true];
+  const boardWithValues = gameBoard.printBoard();
+  boardWithValues.forEach((row, index) => {
+    rowHasFreeCell[index] = row.includes("");
+  });
+  isDraw = rowHasFreeCell.every((status) => status == false);
+  if (isDraw) {
+    dialog.showModal();
   }
 }
 

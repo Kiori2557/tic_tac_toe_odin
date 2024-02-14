@@ -3,9 +3,6 @@ const show = document.querySelector("#show");
 const startNewRoundBtn = document.querySelector(".newRoundBtn");
 const startNewGameBtn = document.querySelector(".newGameBtn");
 
-show.addEventListener("click", function () {
-  dialog.showModal();
-});
 const gameBoard = (function () {
   const rows = 3;
   const columns = 3;
@@ -71,8 +68,6 @@ const gameBoardController = (function () {
     checkWinner();
     checkDraw();
     changePlayer();
-    // console.log(`${activePlayer.name}'s turn.`);
-    // console.log(board);
     return board;
   };
   return { play, getPlayer, getActivePlayer, addScore, getScore, resetScore };
@@ -140,6 +135,7 @@ screenController.generateBoard();
 
 //check winning condition
 function checkWinner() {
+  const dialog = document.querySelector("dialog");
   const board = gameBoard.getBoard();
   const boardWithValues = gameBoard.printBoard();
   const gameController = gameBoardController;
@@ -159,7 +155,7 @@ function checkWinner() {
     let score = gameController.getScore();
     let players = gameBoardController.getPlayer();
     screenController.updateScore(score, players);
-    resetRound(board);
+    dialog.showModal();
   }
   function createColumnObj(boardWithValues) {
     boardWithValues.forEach((row) => {

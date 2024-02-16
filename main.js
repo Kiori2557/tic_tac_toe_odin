@@ -2,7 +2,8 @@ const dialog = document.querySelector("dialog");
 const show = document.querySelector("#show");
 const startNewRoundBtn = document.querySelector(".newRoundBtn");
 const startNewGameBtn = document.querySelector(".newGameBtn");
-
+const resultDisplay = document.querySelector(".result");
+show.addEventListener("click", () => dialog.showModal());
 const gameBoard = (function () {
   const rows = 3;
   const columns = 3;
@@ -58,7 +59,7 @@ const gameBoardController = (function () {
   const changePlayer = function () {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
-
+  const resetActivePlayer = () => (activePlayer = players[0]);
   const getActivePlayer = () => activePlayer;
   const getPlayer = () => players;
 
@@ -66,11 +67,18 @@ const gameBoardController = (function () {
     let playerMark = activePlayer.mark;
     board[x][y].mark(playerMark);
     checkWinner();
-    checkDraw();
     changePlayer();
     return board;
   };
-  return { play, getPlayer, getActivePlayer, addScore, getScore, resetScore };
+  return {
+    play,
+    getPlayer,
+    getActivePlayer,
+    resetActivePlayer,
+    addScore,
+    getScore,
+    resetScore,
+  };
 })();
 
 //Screen Controller
@@ -135,8 +143,8 @@ screenController.generateBoard();
 
 //check winning condition
 function checkWinner() {
+  const resultDisplay = document.querySelector(".result");
   const dialog = document.querySelector("dialog");
-  const board = gameBoard.getBoard();
   const boardWithValues = gameBoard.printBoard();
   const gameController = gameBoardController;
   const columns = [];
@@ -151,11 +159,14 @@ function checkWinner() {
   check(crosses);
   if (hasWinner) {
     let winner = gameController.getActivePlayer().name;
+    resultDisplay.textContent = `${winner} win this round !!`;
     gameController.addScore(winner);
     let score = gameController.getScore();
     let players = gameBoardController.getPlayer();
     screenController.updateScore(score, players);
     dialog.showModal();
+  } else {
+    checkDraw();
   }
   function createColumnObj(boardWithValues) {
     boardWithValues.forEach((row) => {
@@ -224,6 +235,7 @@ function checkDraw() {
   isDraw = rowHasFreeCell.every((status) => status == false);
   if (isDraw) {
     dialog.showModal();
+    resultDisplay.textContent = `Draw`;
   }
 }
 
@@ -236,6 +248,7 @@ function resetRound() {
   board.forEach((row) => {
     row.forEach((cell) => cell.mark(defaultMark));
   });
+  gameBoardController.resetActivePlayer();
   screenController.generateBoard();
   dialog.close();
 }

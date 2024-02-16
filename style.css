@@ -1,6 +1,6 @@
 :root {
   --header-height: 120px;
-  --footer-height: 70px;
+  --footer-height: 100px;
   --gameBoard-height: 450px;
   --gameBoard-width: 450px;
 }
@@ -49,21 +49,65 @@ main {
   cursor: pointer;
   font-size: 7.5rem;
   padding: 0;
+  background-color: white;
 }
 
 footer {
   height: var(--footer-height);
 }
 
+/* dialog */
 .dialog {
-  min-width: 200px;
+  /* min-width: 200px; */
+  max-width: 200px;
   min-height: 150px;
   display: grid;
   grid-template-rows: 1fr 1fr;
-  gap: 20px;
 }
 
 aside {
   border: 1px solid magenta;
   position: relative;
+}
+
+.btns {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.newRoundBtn,
+.newGameBtn {
+  width: 75px;
+  height: 75px;
+  border-radius: 30px;
+}
+.btns > button > i {
+  font-size: 27px;
+}
+
+.result {
+  font-size: 30px;
+  text-align: center;
+  text-wrap: wrap;
+}
+
+/* removing unnecessary border to make the board look like number sign */
+[data-position] {
+  border: 4px black solid;
+}
+[data-position^="0"] {
+  border-top: none;
+}
+[data-position^="2"] {
+  border-bottom: none;
+}
+[data-position$="0"] {
+  border-left: none;
+}
+[data-position$="0"] {
+  border-left: none;
+}
+[data-position$="2"] {
+  border-right: none;
 }

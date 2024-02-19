@@ -1,9 +1,7 @@
 const dialog = document.querySelector("dialog");
-const show = document.querySelector("#show");
 const startNewRoundBtn = document.querySelector(".newRoundBtn");
 const startNewGameBtn = document.querySelector(".newGameBtn");
 const resultDisplay = document.querySelector(".result");
-show.addEventListener("click", () => dialog.showModal());
 const gameBoard = (function () {
   const rows = 3;
   const columns = 3;
@@ -87,6 +85,8 @@ const screenController = (function () {
   const displayScoreDiv = document.querySelector(".displayScore");
   const boardDiv = document.querySelector(".gameBoard");
   const playerTurnDiv = document.querySelector(".playerTurn");
+  const playOneScore = document.querySelector(".playerOne");
+  const playTwoScore = document.querySelector(".playerTwo");
   const game = gameBoard;
   const board = game.board;
   const gameController = gameBoardController;
@@ -113,9 +113,14 @@ const screenController = (function () {
   }
 
   function renderPlayerTurn() {
-    playerTurnDiv.textContent = "";
     let activePlayer = currentPlayer();
-    playerTurnDiv.textContent = `${activePlayer.name}'s turn`;
+    if (activePlayer.name == "playerOne") {
+      playOneScore.classList.add("active");
+      playTwoScore.classList.remove("active");
+    } else if (activePlayer.name == "playerTwo") {
+      playOneScore.classList.remove("active");
+      playTwoScore.classList.add("active");
+    }
   }
 
   function playARound(e) {
@@ -129,11 +134,9 @@ const screenController = (function () {
   }
   function updateScore(score, players) {
     const title = document.createElement("h3");
-    const playOneScore = document.createElement("p");
-    const playTwoScore = document.createElement("p");
     title.textContent = `Game Score`;
-    playOneScore.textContent = `${players[0].name} : ${score.playerOne}`;
-    playTwoScore.textContent = `${players[1].name} : ${score.playerTwo}`;
+    playOneScore.textContent = `Player 1 : ${score.playerOne}`;
+    playTwoScore.textContent = `Player 2 : ${score.playerTwo}`;
     displayScoreDiv.textContent = "";
     displayScoreDiv.append(title, playOneScore, playTwoScore);
   }

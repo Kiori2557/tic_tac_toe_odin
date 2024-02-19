@@ -16,8 +16,10 @@
     <title>Simple Tic Tac Toe</title>
   </head>
   <body>
-    <header>Simple Tic Tac Toe</header>
-    <button id="show">Show</button>
+    <header>
+      <i class="fa-solid fa-xmark xMark"></i> <span>Tic Tac Toe</span>
+      <i class="fa-solid fa-o oMark"></i>
+    </header>
     <dialog>
       <div class="dialog">
         <div class="result"></div>
@@ -33,22 +35,13 @@
     </dialog>
     <div class="container">
       <main>
-        <div class="playerTurn"></div>
         <div class="gameBoard"></div>
       </main>
-      <aside>
-        <div class="displayScore">
-          <h3>Game Score</h3>
-          <p class="playerOne">
-            <span class="playerOneName">playerOne</span>:
-            <span class="playerOneScore">0</span>
-          </p>
-          <p class="playerTwo">
-            <span class="playerTwoName">playerTwo</span>:
-            <span class="playerTwoScore">0</span>
-          </p>
-        </div>
-      </aside>
+      <div class="displayScore">
+        <h3>Game Score</h3>
+        <p class="playerOne active">Player 1 : 0</p>
+        <p class="playerTwo">Player 2 : 0</p>
+      </div>
     </div>
     <footer>
       <span>
